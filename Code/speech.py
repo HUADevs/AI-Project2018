@@ -27,7 +27,7 @@ class Speech(object):
         with m as source:
             r.adjust_for_ambient_noise(source)
             print("I'm listening...")
-            os.system('aplay -q /home/didymos/Documents/AI_Project/audio_files/triggered.wav')
+            os.system('aplay -q audio_files/triggered.wav')
             audio = r.listen(source)
 
         print("Found audio")
@@ -54,8 +54,8 @@ class Speech(object):
 
     def synthesize_text(self, text):
         tts = gTTS(text=text, lang='el', slow=False)
-        tts.save("/home/didymos/Documents/AI_Project/audio_files/tmp.mp3")
+        tts.save("audio_files/tmp.mp3")
 
         print('Response: {response}'.format(response=text))
-        os.system("mpg123 -q /home/didymos/Documents/AI_Project/audio_files/tmp.mp3")
-        os.remove("/home/didymos/Documents/AI_Project/audio_files/tmp.mp3")
+        os.system("mpg123 -q audio_files/tmp.mp3")
+        os.remove("audio_files/tmp.mp3")

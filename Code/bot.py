@@ -6,29 +6,33 @@ import os
 import json
 import traceback
 import wikipedia
+from wit import Wit
 from speech import Speech
 from knowledge import Knowledge
 from phrases import Phrases
 import time
 
-wit_ai_token = "Bearer B5VCVURAJ3XPKVE3UUK7ENCNVDHNJCD3"
 weather_api_token = "73995c4fbf4f6cd3fe31eb7ca4b3bdec"
 
 
 class Bot(object):
-    def __init__(self, trigger_word=None):
+    def __init__(self, trigger_word=None, speech_input=None):
         self.phrases = Phrases()
         self.speech = Speech()
         self.knowledge = Knowledge()
         self.trigger_word = trigger_word
+        self.speech_input = speech_input
+        self.witai = Wit("S73IKQDWJ22OJMOSD6AOT4CSJOWXIPX6")
 
     def start(self):
-        if self.trigger_word is not None:
+        if self.trigger_word and self.speech_input is not None:
             while 1:
                 if self.is_called():
                     self.decide_action()
         else:
-            self.decide_action()
+            print("Γεία σου! Πως θα μπορούσα να σε βοηθήσω;")
+            while 1:
+                self.decide_action()
 
     def is_called(self):
         speech = self.speech.listen_for_trigger_word()
@@ -38,21 +42,23 @@ class Bot(object):
         return False
 
     def decide_action(self):
-        recognizer, audio = self.speech.listen_for_audio()
+
+        if self.speech_input is not None:
+            recognizer, audio = self.speech.listen_for_audio()
 
         # received audio data, now we'll recognize it using Google Speech Recognition
-        speech = self.speech.google_speech_recognition(recognizer, audio)
+            bot_input = self.speech.google_speech_recognition(recognizer, audio)
+        else:
+            bot_input = input()
 
-        if speech is not None:
+        if bot_input is not None:
             try:
-                r = requests.get('https://api.wit.ai/message?v=20160918&q=%s' % speech,
-                                 headers={"Authorization": wit_ai_token})
-                json_resp = json.loads(r.text)
+                resp = self.witai.message(bot_input)
                 entities = None
                 intent = None
-                if 'entities' in json_resp and 'intent' in json_resp['entities']:
-                    entities = json_resp['entities']
-                    intent = json_resp['entities']['intent'][0]["value"]
+                if 'entities' in resp and 'intent' in resp['entities']:
+                    entities = resp['entities']
+                    intent = resp['entities']['intent'][0]["value"]
                     print('Intent: {intent}'.format(intent=intent))
                 if intent == 'greeting':
                     self.__text_action(self.phrases.greet())
@@ -65,14 +71,14 @@ class Bot(object):
                 elif intent == 'joke':
                     self.__joke_action()
                 elif intent == 'datetime':
-                    print(json_resp)
+                    #print(resp)
                     self.__datetime_action(entities)
                 elif intent == 'weather':
                     self.__weather_action()
                 elif intent == 'search':
                     self.__search_action(entities)
                 else:  # No recognized intent
-                    print('Intent not recognized')
+                    #print('Intent not recognized')
                     self.__text_action(self.phrases.unrecognized_intent())
                     return
 
@@ -85,7 +91,10 @@ class Bot(object):
 
     def __text_action(self, text=None):
         if text is not None:
-            self.speech.synthesize_text(text)
+            if self.speech_input is not None:
+                self.speech.synthesize_text(text)
+            else:
+                print(text)
 
     def __tutorial_action(self):
         self.__text_action(self.phrases.tutorial())
@@ -131,8 +140,6 @@ class Bot(object):
                 self.__text_action('Δεν βρήκα κάποιο αποτέλεσμα')
         else:
             self.__text_action('Δεν μου είπες τί να ψάξω')
-
-
 
 
 if __name__ == "__main__":
