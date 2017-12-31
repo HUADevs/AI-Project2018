@@ -65,7 +65,7 @@ class Bot(object):
                 if 'entities' in resp and 'intent' in resp['entities']:
                     entities = resp['entities']
                     intent = resp['entities']['intent'][0]["value"]
-                    print('Intent: {intent}'.format(intent=intent))
+                    #print('Intent: {intent}'.format(intent=intent))
                 if intent == 'greeting':
                     self.__text_action(self.phrases.greet())
                 elif intent == 'tutorial':
@@ -151,13 +151,12 @@ class Bot(object):
 
     def __food_action(self,entities):
         self.__text_action(self.phrases.searching())
-        inp=self.gr_to_en.translate(entities['food'][0]['value'])
+        inp=self.gr_to_en.translate(entities['wikipedia_search_query'][0]['value'])
         try:
             resp = self.fs.foods_search(inp)
             print(self.en_to_gr.translate(resp[0]["food_name"]) + "\n" + resp[0]["food_description"])
         except Exception as e:
-            entities['wikipedia_search_query'][0]['value'] = entities['food'][0]['value']
-            self.__search_action()
+            self.__search_action(entities)
 
 if __name__ == "__main__":
     bot = Bot(trigger_word='Siri')
