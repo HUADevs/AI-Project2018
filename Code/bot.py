@@ -10,9 +10,12 @@ from wit import Wit
 from speech import Speech
 from knowledge import Knowledge
 from phrases import Phrases
+from fatsecret import Fatsecret
+from translate import Translator
 import time
 
 weather_api_token = "73995c4fbf4f6cd3fe31eb7ca4b3bdec"
+fat_secret_oauth = "90fe184a283449ed8a83e35790c04d65"
 
 
 class Bot(object):
@@ -23,6 +26,9 @@ class Bot(object):
         self.trigger_word = trigger_word
         self.speech_input = speech_input
         self.witai = Wit("S73IKQDWJ22OJMOSD6AOT4CSJOWXIPX6")
+        self.fs = Fatsecret("90fe184a283449ed8a83e35790c04d65", "054e80b2be154337af191be2c9e11c28")
+        self.gr_to_en = Translator(from_lang="el",to_lang="en")
+        self.en_to_gr = Translator(from_lang="en",to_lang="el")
 
     def start(self):
         if self.trigger_word and self.speech_input is not None:
@@ -77,6 +83,8 @@ class Bot(object):
                     self.__weather_action()
                 elif intent == 'search':
                     self.__search_action(entities)
+                elif intent == 'food_det':
+                    self.__food_action(entities)
                 else:  # No recognized intent
                     #print('Intent not recognized')
                     self.__text_action(self.phrases.unrecognized_intent())
@@ -141,6 +149,15 @@ class Bot(object):
         else:
             self.__text_action('Δεν μου είπες τί να ψάξω')
 
+    def __food_action(self,entities):
+        self.__text_action(self.phrases.searching())
+        inp=self.gr_to_en.translate(entities['food'][0]['value'])
+        try:
+            resp = self.fs.foods_search(inp)
+            print(self.en_to_gr.translate(resp[0]["food_name"]) + "\n" + resp[0]["food_description"])
+        except Exception as e:
+            entities['wikipedia_search_query'][0]['value'] = entities['food'][0]['value']
+            self.__search_action()
 
 if __name__ == "__main__":
     bot = Bot(trigger_word='Siri')
