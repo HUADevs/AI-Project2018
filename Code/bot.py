@@ -153,7 +153,8 @@ class Bot(object):
         try:
             resp = self.fs.foods_search(inp)
             print(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
-            food = self.fs.food_get(int(resp[0]['food_id']))
+            print(resp)
+            food = self.fs.food_get(resp[0]['food_id'])
             print(self.en_to_gr('1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
             for nutrient in entities['nutrient_type']:
                 print(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
