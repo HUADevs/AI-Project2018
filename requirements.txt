@@ -1,0 +1,8 @@
+wit==4.3.0
+requests==2.18.4
+fatsecret==0.2.3
+SpeechRecognition==3.8.1
+gTTS==1.2.2
+wikipedia==1.4.0
+googletrans==2.2.0
+pyaudio==0.2.11
