@@ -19,7 +19,7 @@ def interrupt_callback():
     return interrupted
 
 
-models = '{dir}/resources/alexa.umdl'.format(dir=DIRECTORY)
+models = '{dir}/resources/Jarvis.pmdl'.format(dir=DIRECTORY)
 
 
 def detected():
