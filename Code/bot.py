@@ -1,17 +1,12 @@
-#!/usr/bin/python3
 import re
-
-import requests
-import os
-import json
 import traceback
 import wikipedia
 from wit import Wit
-from speech import Speech
-from knowledge import Knowledge
-from phrases import Phrases
+from Code.speech import Speech
+from Code.knowledge import Knowledge
+from Code.phrases import Phrases
 from fatsecret import Fatsecret
-from translate import Translator
+from googletrans import Translator
 import time
 
 weather_api_token = "73995c4fbf4f6cd3fe31eb7ca4b3bdec"
@@ -19,22 +14,27 @@ fat_secret_oauth = "90fe184a283449ed8a83e35790c04d65"
 
 
 class Bot(object):
-    def __init__(self, trigger_word=None, speech_input=None):
+    def __init__(self, speech_input=False):
         self.phrases = Phrases()
         self.speech = Speech()
         self.knowledge = Knowledge()
-        self.trigger_word = trigger_word
+        # self.trigger_word = trigger_word
         self.speech_input = speech_input
         self.witai = Wit("S73IKQDWJ22OJMOSD6AOT4CSJOWXIPX6")
         self.fs = Fatsecret("90fe184a283449ed8a83e35790c04d65", "054e80b2be154337af191be2c9e11c28")
-        self.gr_to_en = Translator(from_lang="el",to_lang="en")
-        self.en_to_gr = Translator(from_lang="en",to_lang="el")
+        self.translator = Translator()
+
+    def gr_to_en(self, text):
+        return self.translator.translate(text, 'en', 'el').text
+
+    def en_to_gr(self, text):
+        return self.translator.translate(text, 'el', 'en').text
 
     def start(self):
-        if self.trigger_word and self.speech_input is not None:
-            while 1:
-                if self.is_called():
-                    self.decide_action()
+        if self.speech_input:
+            # while 1:
+            #     if self.is_called():
+            self.decide_action()
         else:
             print("Γεία σου! Πως θα μπορούσα να σε βοηθήσω;")
             while 1:
@@ -49,10 +49,10 @@ class Bot(object):
 
     def decide_action(self):
 
-        if self.speech_input is not None:
+        if self.speech_input:
             recognizer, audio = self.speech.listen_for_audio()
 
-        # received audio data, now we'll recognize it using Google Speech Recognition
+            # received audio data, now we'll recognize it using Google Speech Recognition
             bot_input = self.speech.google_speech_recognition(recognizer, audio)
         else:
             bot_input = input()
@@ -65,7 +65,7 @@ class Bot(object):
                 if 'entities' in resp and 'intent' in resp['entities']:
                     entities = resp['entities']
                     intent = resp['entities']['intent'][0]["value"]
-                    #print('Intent: {intent}'.format(intent=intent))
+                    # print('Intent: {intent}'.format(intent=intent))
                 if intent == 'greeting':
                     self.__text_action(self.phrases.greet())
                 elif intent == 'tutorial':
@@ -77,7 +77,7 @@ class Bot(object):
                 elif intent == 'joke':
                     self.__joke_action()
                 elif intent == 'datetime':
-                    #print(resp)
+                    # print(resp)
                     self.__datetime_action(entities)
                 elif intent == 'weather':
                     self.__weather_action()
@@ -86,7 +86,7 @@ class Bot(object):
                 elif intent == 'food_det':
                     self.__food_action(entities)
                 else:  # No recognized intent
-                    #print('Intent not recognized')
+                    # print('Intent not recognized')
                     self.__text_action(self.phrases.unrecognized_intent())
                     return
 
@@ -99,7 +99,7 @@ class Bot(object):
 
     def __text_action(self, text=None):
         if text is not None:
-            if self.speech_input is not None:
+            if self.speech_input:
                 self.speech.synthesize_text(text)
             else:
                 print(text)
@@ -109,9 +109,6 @@ class Bot(object):
 
     def __personal_status(self):
         self.__text_action(self.phrases.personal_status())
-
-    def __beatbox_action(self):
-        self.__text_action(self.phrases.beatbox())
 
     def __joke_action(self):
         joke = self.phrases.joke()
@@ -149,15 +146,22 @@ class Bot(object):
         else:
             self.__text_action('Δεν μου είπες τί να ψάξω')
 
-    def __food_action(self,entities):
+    def __food_action(self, entities):
         self.__text_action(self.phrases.searching())
-        inp=self.gr_to_en.translate(entities['wikipedia_search_query'][0]['value'])
+        inp = self.gr_to_en(entities['wikipedia_search_query'][0]['value'])
+        print(inp)
         try:
             resp = self.fs.foods_search(inp)
-            print(self.en_to_gr.translate(resp[0]["food_name"]) + "\n" + resp[0]["food_description"])
+            print(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
+            food = self.fs.food_get(int(resp[0]['food_id']))
+            print(self.en_to_gr('1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
+            for nutrient in entities['nutrient_type']:
+                print(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
+                                                   value=food['servings']['serving'][0][nutrient['value']])))
         except Exception as e:
             self.__search_action(entities)
 
+
 if __name__ == "__main__":
-    bot = Bot(trigger_word='Siri')
+    bot = Bot()
     bot.start()

@@ -1,12 +1,14 @@
 import os
-import snowboydecoder
 import signal
-from bot import Bot
+
+from Code import snowboydecoder
+from Code.bot import Bot
 
 interrupted = False
-assistant = Bot()
+assistant = Bot(speech_input=True)
+DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 print('Starting assistant... Press Ctrl+C to exit')
-# os.system('aplay -q /path/to/startup/.wav/file')
+os.system('aplay -q {dir}/audio_files/startup.wav'.format(dir=DIRECTORY))
 
 def signal_handler(signal, frame):
     global interrupted
@@ -18,7 +20,8 @@ def interrupt_callback():
     return interrupted
 
 
-models = "/path/to/.pmdl/file"
+models = '{dir}/resources/alexa.umdl'.format(dir=DIRECTORY)
+
 
 def detected():
     detector.terminate()
@@ -27,18 +30,24 @@ def detected():
                    interrupt_check=interrupt_callback,
                    sleep_time=0.03)
 
-
 callbacks = detected
 
-# capture SIGINT signal, e.g., Ctrl+C
-signal.signal(signal.SIGINT, signal_handler)
-
 detector = snowboydecoder.HotwordDetector(models, sensitivity=0.5)
-print('Listening...')
 
-# main loop
-detector.start(detected_callback=callbacks,
-               interrupt_check=interrupt_callback,
-               sleep_time=0.03)
 
-detector.terminate()
+def main():
+    # capture SIGINT signal, e.g., Ctrl+C
+    signal.signal(signal.SIGINT, signal_handler)
+
+    print('Listening...')
+
+    # main loop
+    detector.start(detected_callback=callbacks,
+                   interrupt_check=interrupt_callback,
+                   sleep_time=0.03)
+
+    detector.terminate()
+
+
+if __name__ == '__main__':
+    main()
