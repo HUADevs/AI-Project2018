@@ -1,8 +1,7 @@
 import os
 import signal
-
-from Code import snowboydecoder
-from Code.bot import Bot
+import snowboydecoder
+from bot import Bot
 
 interrupted = False
 assistant = Bot(speech_input=True)

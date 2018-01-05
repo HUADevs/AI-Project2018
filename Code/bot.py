@@ -155,9 +155,9 @@ class Bot(object):
             print(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
             print(resp)
             food = self.fs.food_get(resp[0]['food_id'])
-            print(self.en_to_gr('1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
+            self.__text_action(self.en_to_gr('1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
             for nutrient in entities['nutrient_type']:
-                print(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
+                self.__text_action(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
                                                    value=food['servings']['serving'][0][nutrient['value']])))
         except Exception as e:
             self.__search_action(entities)
