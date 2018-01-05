@@ -2,9 +2,9 @@ import re
 import traceback
 import wikipedia
 from wit import Wit
-from Code.speech import Speech
-from Code.knowledge import Knowledge
-from Code.phrases import Phrases
+from speech import Speech
+from knowledge import Knowledge
+from phrases import Phrases
 from fatsecret import Fatsecret
 from googletrans import Translator
 import time
