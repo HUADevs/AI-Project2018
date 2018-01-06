@@ -2,9 +2,9 @@ import re
 import traceback
 import wikipedia
 from wit import Wit
-from speech import Speech
-from knowledge import Knowledge
-from phrases import Phrases
+from Code.speech import Speech
+from Code.knowledge import Knowledge
+from Code.phrases import Phrases
 from fatsecret import Fatsecret
 from googletrans import Translator
 import time
@@ -151,15 +151,14 @@ class Bot(object):
     def __food_action(self, entities):
         self.__text_action(self.phrases.searching())
         inp = self.gr_to_en(entities['wikipedia_search_query'][0]['value'])
-        print(inp)
         try:
             resp = self.fs.foods_search(inp)
-            print(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
-            print(resp)
+            self.__text_action(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
             food = self.fs.food_get(resp[0]['food_id'])
-            self.__text_action(self.en_to_gr('1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
-            for nutrient in entities['nutrient_type']:
-                self.__text_action(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
+            if 'nutrient_type' in entities.keys():
+                self.__text_action(self.en_to_gr('1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
+                for nutrient in entities['nutrient_type']:
+                    self.__text_action(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
                                                    value=food['servings']['serving'][0][nutrient['value']])))
         except Exception as e:
             self.__search_action(entities)
@@ -167,6 +166,19 @@ class Bot(object):
     def __recipe_action(self, entities):
         self.__text_action(self.phrases.searching())
         inp = self.gr_to_en(entities['wikipedia_search_query'][0]['value'])
+        try:
+            resp = self.fs.recipes_search(inp)
+            recipe = self.fs.recipe_get(resp[0]['recipe_id'])
+            self.__text_action(self.en_to_gr(recipe['recipe_name'] + "\n"))
+            self.__text_action("Οδηγίες")
+            for dir in recipe['directions']['direction']:
+                self.__text_action(self.en_to_gr(dir['direction_description']))
+            self.__text_action("Συστατικά")
+            for ing in recipe['ingredients']['ingredient']:
+                self.__text_action(self.en_to_gr(ing['ingredient_description']))
+        except Exception as e:
+            self.__text_action("Δεν υπάρχει διαθέσιμη συνταγή για " + entities['wikipedia_search_query'][0]['value'])
+            self.__search_action(entities)
 
 if __name__ == "__main__":
     bot = Bot()
