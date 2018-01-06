@@ -85,6 +85,8 @@ class Bot(object):
                     self.__search_action(entities)
                 elif intent == 'food_det':
                     self.__food_action(entities)
+                elif intent == 'recipe':
+                    self.__recipe_action(entities)
                 else:  # No recognized intent
                     # print('Intent not recognized')
                     self.__text_action(self.phrases.unrecognized_intent())
@@ -162,6 +164,9 @@ class Bot(object):
         except Exception as e:
             self.__search_action(entities)
 
+    def __recipe_action(self, entities):
+        self.__text_action(self.phrases.searching())
+        inp = self.gr_to_en(entities['wikipedia_search_query'][0]['value'])
 
 if __name__ == "__main__":
     bot = Bot()
