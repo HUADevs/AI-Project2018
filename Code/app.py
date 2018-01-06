@@ -6,9 +6,12 @@ from datetime import datetime
 import requests
 from flask import Flask, request
 
+from bot import Bot
+
 VERIFY_TOKEN = "test_token"
 PAGE_ACCESS_TOKEN = "EAAaVttkZBpccBAHYsxd7jZAr1l1oIGHxxobFXZBrnZBFwvQfpZCBnog5TeiZBZBADdZB1lwXI1wZC7K1LnDXDTxHvAYTZC3bxP9XTZBZCf2K59kZCGZCBZBYY1GTb4T1EcHpy8JTfZAlnyxaRrwtVIDBZCyEBrL4PNmRZCaqo9gVxDUaVuFGA48AZDZD"
 app = Flask(__name__)
+bot = Bot(facebook_input=True)
 
 
 @app.route('/', methods=['GET'])
@@ -41,8 +44,9 @@ def webhook():
                     recipient_id = messaging_event["recipient"][
                         "id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-
-                    send_message(sender_id, "roger that!")
+                    bot.decide_action(facebook_input=message_text)
+                    for response in bot.facebook_response:
+                        send_message(sender_id, "roger that!")
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass

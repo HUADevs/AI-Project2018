@@ -14,11 +14,13 @@ fat_secret_oauth = "90fe184a283449ed8a83e35790c04d65"
 
 
 class Bot(object):
-    def __init__(self, speech_input=False):
+    def __init__(self, speech_input=False, facebook_input=False):
         self.phrases = Phrases()
         self.speech = Speech()
         self.knowledge = Knowledge()
-        # self.trigger_word = trigger_word
+        self.facebook_input = facebook_input
+        if self.facebook_input:
+            self.facebook_response = []
         self.speech_input = speech_input
         self.witai = Wit("S73IKQDWJ22OJMOSD6AOT4CSJOWXIPX6")
         self.fs = Fatsecret("90fe184a283449ed8a83e35790c04d65", "054e80b2be154337af191be2c9e11c28")
@@ -31,33 +33,27 @@ class Bot(object):
         return self.translator.translate(text, 'el', 'en').text
 
     def start(self):
-        if self.speech_input:
-            # while 1:
-            #     if self.is_called():
+        if self.speech_input or self.facebook_input:
             self.decide_action()
         else:
             print("Γεία σου! Πως θα μπορούσα να σε βοηθήσω;")
             while 1:
                 self.decide_action()
 
-    def is_called(self):
-        speech = self.speech.listen_for_trigger_word()
-        if speech is not None:
-            if self.trigger_word.lower() in speech.lower():
-                return True
-        return False
+    def decide_action(self, facebook_input):
 
-    def decide_action(self):
-
-        if self.speech_input:
-            recognizer, audio = self.speech.listen_for_audio()
-
-            # received audio data, now we'll recognize it using Google Speech Recognition
-            bot_input = self.speech.google_speech_recognition(recognizer, audio)
+        if self.speech_input or self.facebook_input:
+            if self.speech_input:
+                recognizer, audio = self.speech.listen_for_audio()
+                # received audio data, now we'll recognize it using Google Speech Recognition
+                bot_input = self.speech.google_speech_recognition(recognizer, audio)
+            if self.facebook_input:
+                bot_input = facebook_input
         else:
             bot_input = input()
 
         if bot_input is not None:
+            self.facebook_response = []
             try:
                 resp = self.witai.message(bot_input)
                 entities = None
@@ -103,6 +99,8 @@ class Bot(object):
         if text is not None:
             if self.speech_input:
                 self.speech.synthesize_text(text)
+            if self.facebook_input:
+                self.facebook_response.append(text)
             else:
                 print(text)
 
