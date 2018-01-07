@@ -1,5 +1,6 @@
 import random
 import datetime
+import yaml
 
 
 class Phrases(object):
@@ -9,14 +10,21 @@ class Phrases(object):
         # make random more random by seeding with time
         random.seed(datetime.datetime.now())
 
+
+
     def searching(self):
         searching_phrases = [
             "Άσε με να το ψάξω",
             "Δώσ'μου δύο λεπτά",
             "Μισό να το ψάξω"
         ]
+        stream = open('search_phrases.yaml', 'w')
+        yaml.dump(searching_phrases, stream)
+        stream1 = open('search_phrases.yaml', 'r')
+        result = yaml.load(stream1)
+        print(result)
 
-        return random.choice(searching_phrases)
+        return random.choice(result)
 
     def personal_status(self, status_type=None):
         positive_status=[
