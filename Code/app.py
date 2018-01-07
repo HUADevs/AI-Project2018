@@ -95,4 +95,4 @@ def log(msg, *args, **kwargs):  # simple wrapper for logging to stdout on heroku
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=8080, host='0.0.0.0')
