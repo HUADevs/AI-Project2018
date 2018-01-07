@@ -14,7 +14,7 @@ class Knowledge(object):
         lat = loc_obj['lat']
         lon = loc_obj['lon']
 
-        weather_req_url = "http://api.openweathermap.org/data/2.5/find?lat=%s&lon=%s&units=metric&appid=%s" % (lat, lon, self.weather_api_token)
+        weather_req_url = "http://api.openweathermap.org/data/2.5/find?lat={0}&lon={1}&units=metric&appid={2}".format(lat, lon, self.weather_api_token)
         r = requests.get(weather_req_url)
         weather_json = json.loads(r.text)
 

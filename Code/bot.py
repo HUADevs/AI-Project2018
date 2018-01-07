@@ -9,7 +9,7 @@ from fatsecret import Fatsecret
 from googletrans import Translator
 import time
 
-weather_api_token = "73995c4fbf4f6cd3fe31eb7ca4b3bdec"
+weather_api_token = "4636f98b18066838b6e76074f474067e"
 fat_secret_oauth = "90fe184a283449ed8a83e35790c04d65"
 
 
@@ -17,7 +17,7 @@ class Bot(object):
     def __init__(self, speech_input=False, facebook_input=False):
         self.phrases = Phrases()
         self.speech = Speech()
-        self.knowledge = Knowledge()
+        self.knowledge = Knowledge(weather_api_token=weather_api_token)
         self.facebook_input = facebook_input
         if self.facebook_input:
             self.facebook_response = list()
