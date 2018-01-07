@@ -20,7 +20,7 @@ class Bot(object):
         self.knowledge = Knowledge()
         self.facebook_input = facebook_input
         if self.facebook_input:
-            self.facebook_response = []
+            self.facebook_response = list()
         self.speech_input = speech_input
         self.witai = Wit("S73IKQDWJ22OJMOSD6AOT4CSJOWXIPX6")
         self.fs = Fatsecret("90fe184a283449ed8a83e35790c04d65", "054e80b2be154337af191be2c9e11c28")
@@ -53,7 +53,7 @@ class Bot(object):
             bot_input = input()
 
         if bot_input is not None:
-            self.facebook_response = []
+            self.facebook_response.clear()
             try:
                 resp = self.witai.message(bot_input)
                 entities = None
@@ -151,15 +151,18 @@ class Bot(object):
         inp = self.gr_to_en(entities['wikipedia_search_query'][0]['value'])
         try:
             resp = self.fs.foods_search(inp)
-            self.__text_action(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
             food = self.fs.food_get(resp[0]['food_id'])
             if 'nutrient_type' in entities.keys():
-                self.__text_action(self.en_to_gr('1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
+                self.__text_action(
+                    self.en_to_gr(
+                        '1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
                 for nutrient in entities['nutrient_type']:
                     self.__text_action(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
-                                                   value=food['servings']['serving'][0][nutrient['value']])))
+                                                                                  value=food['servings']['serving'][0][
+                                                                                      nutrient['value']])))
+            else:
+                self.__text_action(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
         except Exception as e:
-            print(e)
             self.__search_action(entities)
 
     def __recipe_action(self, entities):

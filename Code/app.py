@@ -1,10 +1,9 @@
 import os
 import sys
-import json
 from datetime import datetime
 
 import requests
-from flask import Flask, request
+from flask import Flask, request, json
 
 from bot import Bot
 
@@ -47,6 +46,7 @@ def webhook():
                     bot.decide_action(facebook_input=message_text)
                     for fb_response in bot.facebook_response:
                         send_message(sender_id, fb_response)
+                        bot.facebook_response.remove(fb_response)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -96,4 +96,4 @@ def log(msg, *args, **kwargs):  # simple wrapper for logging to stdout on heroku
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=8080, host='0.0.0.0')
