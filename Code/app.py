@@ -29,8 +29,7 @@ def verify():
 def webhook():
     # endpoint for processing incoming messaging events
 
-    # data = request.get_json()
-    data = json.loads(request.data)
+    data = request.get_json()
     log(data)  # you may not want to log every incoming message in production, but it's good for testing
 
     if data["object"] == "page":
@@ -44,7 +43,7 @@ def webhook():
                     recipient_id = messaging_event["recipient"][
                         "id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    bot.decide_action(facebook_input=message_text)
+                    bot.decide_action(facebook_input=str(message_text))
                     for fb_response in bot.facebook_response:
                         send_message(sender_id, fb_response)
 
