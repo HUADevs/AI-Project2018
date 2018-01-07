@@ -96,4 +96,4 @@ def log(msg, *args, **kwargs):  # simple wrapper for logging to stdout on heroku
 
 if __name__ == '__main__':
     bot = Bot(facebook_input=True)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
