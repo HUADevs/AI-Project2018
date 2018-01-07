@@ -40,7 +40,7 @@ class Bot(object):
             while 1:
                 self.decide_action()
 
-    def decide_action(self, facebook_input):
+    def decide_action(self, facebook_input=None):
 
         if self.speech_input or self.facebook_input:
             if self.speech_input:
