@@ -159,6 +159,7 @@ class Bot(object):
                     self.__text_action(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
                                                    value=food['servings']['serving'][0][nutrient['value']])))
         except Exception as e:
+            print(e)
             self.__search_action(entities)
 
     def __recipe_action(self, entities):
