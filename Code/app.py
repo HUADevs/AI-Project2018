@@ -10,6 +10,7 @@ from bot import Bot
 
 VERIFY_TOKEN = "test_token"
 PAGE_ACCESS_TOKEN = "EAAaVttkZBpccBAHYsxd7jZAr1l1oIGHxxobFXZBrnZBFwvQfpZCBnog5TeiZBZBADdZB1lwXI1wZC7K1LnDXDTxHvAYTZC3bxP9XTZBZCf2K59kZCGZCBZBYY1GTb4T1EcHpy8JTfZAlnyxaRrwtVIDBZCyEBrL4PNmRZCaqo9gVxDUaVuFGA48AZDZD"
+bot = Bot(facebook_input=True)
 app = Flask(__name__)
 
 
@@ -95,5 +96,4 @@ def log(msg, *args, **kwargs):  # simple wrapper for logging to stdout on heroku
 
 
 if __name__ == '__main__':
-    bot = Bot(facebook_input=True)
-    app.run(host='0.0.0.0', port=5000)
+    app.run()
