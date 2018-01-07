@@ -1,10 +1,9 @@
 import os
 import sys
-import json
 from datetime import datetime
 
 import requests
-from flask import Flask, request
+from flask import Flask, request, json
 
 from bot import Bot
 
@@ -30,7 +29,8 @@ def verify():
 def webhook():
     # endpoint for processing incoming messaging events
 
-    data = request.get_json()
+    # data = request.get_json()
+    data = json.loads(request.data)
     log(data)  # you may not want to log every incoming message in production, but it's good for testing
 
     if data["object"] == "page":
