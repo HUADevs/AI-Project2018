@@ -48,12 +48,12 @@ class Bot(object):
                 # received audio data, now we'll recognize it using Google Speech Recognition
                 bot_input = self.speech.google_speech_recognition(recognizer, audio)
             if self.facebook_input:
+                self.facebook_response.clear()
                 bot_input = facebook_input
         else:
             bot_input = input()
 
         if bot_input is not None:
-            self.facebook_response.clear()
             try:
                 resp = self.witai.message(bot_input)
                 entities = None
@@ -163,6 +163,8 @@ class Bot(object):
             else:
                 self.__text_action(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
         except Exception as e:
+            self.__text_action(
+                "Δεν υπάρχουν διαθέσιμες διατροφικές πληροφορίες για " + entities['wikipedia_search_query'][0]['value'])
             self.__search_action(entities)
 
     def __recipe_action(self, entities):
