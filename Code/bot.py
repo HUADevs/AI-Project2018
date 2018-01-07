@@ -48,7 +48,7 @@ class Bot(object):
                 # received audio data, now we'll recognize it using Google Speech Recognition
                 bot_input = self.speech.google_speech_recognition(recognizer, audio)
             if self.facebook_input:
-                # self.facebook_response.clear()
+                self.facebook_response[:] = []
                 bot_input = facebook_input
         else:
             bot_input = input()
