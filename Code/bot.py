@@ -68,8 +68,6 @@ class Bot(object):
                     self.__tutorial_action()
                 elif intent == 'personal_status':
                     self.__personal_status()
-                elif intent == 'beatbox':
-                    self.__beatbox_action()
                 elif intent == 'joke':
                     self.__joke_action()
                 elif intent == 'datetime':
@@ -101,7 +99,7 @@ class Bot(object):
                 self.speech.synthesize_text(text)
             if self.facebook_input:
                 self.facebook_response.append(text)
-            else:
+            if not(self.facebook_input or self.speech_input):
                 print(text)
 
     def __tutorial_action(self):
@@ -174,7 +172,7 @@ class Bot(object):
             resp = self.fs.recipes_search(inp)
             recipe = self.fs.recipe_get(resp[0]['recipe_id'])
             if self.facebook_input:
-                self.__text_action('Μπορείς να δεις την συνταγή στο παρακάτω link:')
+                self.__text_action("Μπορείς να δεις την συνταγή στο παρακάτω link:")
                 self.__text_action(recipe['recipe_url'])
             else:
                 self.__text_action(self.en_to_gr(recipe['recipe_name'] + "\n"))
