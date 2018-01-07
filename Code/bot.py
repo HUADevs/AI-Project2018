@@ -151,8 +151,10 @@ class Bot(object):
         inp = self.gr_to_en(entities['wikipedia_search_query'][0]['value'])
         try:
             resp = self.fs.foods_search(inp)
+            print(resp)
             # self.__text_action(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
             food = self.fs.food_get(resp[0]['food_id'])
+            print(food)
             if 'nutrient_type' in entities.keys():
                 self.__text_action(self.en_to_gr('1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
                 for nutrient in entities['nutrient_type']:
