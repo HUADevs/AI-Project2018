@@ -171,13 +171,17 @@ class Bot(object):
         try:
             resp = self.fs.recipes_search(inp)
             recipe = self.fs.recipe_get(resp[0]['recipe_id'])
-            self.__text_action(self.en_to_gr(recipe['recipe_name'] + "\n"))
-            self.__text_action("Οδηγίες")
-            for dir in recipe['directions']['direction']:
-                self.__text_action(self.en_to_gr(dir['direction_description']))
-            self.__text_action("Συστατικά")
-            for ing in recipe['ingredients']['ingredient']:
-                self.__text_action(self.en_to_gr(ing['ingredient_description']))
+            if self.facebook_input:
+                self.__text_action('Μπορείς να δεις την συνταγή στο παρακάτω link:')
+                self.__text_action(recipe['recipe_url'])
+            else:
+                self.__text_action(self.en_to_gr(recipe['recipe_name'] + "\n"))
+                self.__text_action("Οδηγίες")
+                for dir in recipe['directions']['direction']:
+                    self.__text_action(self.en_to_gr(dir['direction_description']))
+                self.__text_action("Συστατικά")
+                for ing in recipe['ingredients']['ingredient']:
+                    self.__text_action(self.en_to_gr(ing['ingredient_description']))
         except Exception as e:
             self.__text_action("Δεν υπάρχει διαθέσιμη συνταγή για " + entities['wikipedia_search_query'][0]['value'])
             self.__search_action(entities)
