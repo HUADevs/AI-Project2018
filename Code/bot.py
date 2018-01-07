@@ -180,6 +180,7 @@ class Bot(object):
             self.__text_action("Δεν υπάρχει διαθέσιμη συνταγή για " + entities['wikipedia_search_query'][0]['value'])
             self.__search_action(entities)
 
+
 if __name__ == "__main__":
     bot = Bot()
     bot.start()
