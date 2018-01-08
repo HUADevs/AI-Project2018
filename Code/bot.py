@@ -196,9 +196,9 @@ if __name__ == "__main__":
     bot.start()
     # print("Training Mode On")
     # while 1:
-    #     filename=input("enter filename")
+    #     filename=input("enter filename \n")
     #     phraseslist=[]
-    #     phraseslist.append(input("enter phrase"))
+    #     phraseslist.append(input("enter phrase \n"))
     #     bot.learn_action(filename=filename,phraseslist=phraseslist)
-    #
+
 
