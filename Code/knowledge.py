@@ -2,6 +2,7 @@ import locale
 import requests
 import json
 import datetime
+from phrases import Phrases
 
 
 class Knowledge(object):
@@ -14,7 +15,8 @@ class Knowledge(object):
         lat = loc_obj['lat']
         lon = loc_obj['lon']
 
-        weather_req_url = "http://api.openweathermap.org/data/2.5/find?lat=%s&lon=%s&units=metric&appid=%s" % (lat, lon, self.weather_api_token)
+        weather_req_url = "http://api.openweathermap.org/data/2.5/find?lat=%s&lon=%s&units=metric&appid=%s" % (
+            lat, lon, self.weather_api_token)
         r = requests.get(weather_req_url)
         weather_json = json.loads(r.text)
 
@@ -39,7 +41,7 @@ class Knowledge(object):
         ip_json = json.loads(req.text)
         return ip_json['ip']
 
-    #datetime functions
+    # datetime functions
     def get_time(self):
         return datetime.datetime.now().strftime('%I:%M')
 
@@ -50,3 +52,7 @@ class Knowledge(object):
     def get_date(self):
         locale.setlocale(locale.LC_ALL, 'el_GR.UTF-8')
         return datetime.datetime.today().strftime('%A, %x')
+
+    @staticmethod
+    def learn_default_responses(file, phrases):
+        Phrases.add_phrases(file, phrases)

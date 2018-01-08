@@ -40,6 +40,10 @@ class Bot(object):
             while 1:
                 self.decide_action()
 
+    def learn_action(self):
+        Knowledge.learn_default_responses(file='put some file',
+                                          phrases=["put some phrases"])
+
     def decide_action(self, facebook_input=None):
 
         if self.speech_input or self.facebook_input:
@@ -63,7 +67,7 @@ class Bot(object):
                     intent = resp['entities']['intent'][0]["value"]
                     # print('Intent: {intent}'.format(intent=intent))
                 if intent == 'greeting':
-                    self.__text_action(self.phrases.greet())
+                    self.__text_action(self.phrases.get_phrases('greetings_phrases'))
                 elif intent == 'tutorial':
                     self.__tutorial_action()
                 elif intent == 'personal_status':
@@ -85,7 +89,7 @@ class Bot(object):
                     self.__recipe_action(entities)
                 else:  # No recognized intent
                     # print('Intent not recognized')
-                    self.__text_action(self.phrases.unrecognized_intent())
+                    self.__text_action(self.phrases.get_phrases('unrecognized_intent_phrases'))
                     return
 
             except Exception as e:
@@ -105,13 +109,13 @@ class Bot(object):
                 print(text)
 
     def __tutorial_action(self):
-        self.__text_action(self.phrases.tutorial())
+        self.__text_action(self.phrases.get_phrases('tutorial_phrases'))
 
     def __personal_status(self):
-        self.__text_action(self.phrases.personal_status())
+        self.__text_action(self.phrases.get_phrases('personal_status_phrases'))
 
     def __joke_action(self):
-        joke = self.phrases.joke()
+        joke = self.phrases.get_phrases('joke_phrases')
         for j in joke:
             time.sleep(1)
             self.__text_action(j)
@@ -133,7 +137,7 @@ class Bot(object):
         self.__text_action('Η θερμοκρασία είναι ' + str(weather_obj['temperature']) + '° Κελσίου.')
 
     def __search_action(self, entities=None):
-        self.__text_action(self.phrases.searching())
+        self.__text_action(self.phrases.get_phrases('search_phrases'))
         if 'wikipedia_search_query' in entities:
             query = entities['wikipedia_search_query'][0]['value']
             print('wikipedia query: {query}'.format(query=query))
@@ -147,7 +151,7 @@ class Bot(object):
             self.__text_action('Δεν μου είπες τί να ψάξω')
 
     def __food_action(self, entities):
-        self.__text_action(self.phrases.searching())
+        self.__text_action(self.phrases.get_phrases('search_phrases'))
         inp = self.gr_to_en(entities['wikipedia_search_query'][0]['value'])
         try:
             resp = self.fs.foods_search(inp)
@@ -158,7 +162,8 @@ class Bot(object):
                         '1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
                 for nutrient in entities['nutrient_type']:
                     self.__text_action(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
-                                                                                  value=food['servings']['serving'][0][
+                                                                                  value=
+                                                                                  food['servings']['serving'][0][
                                                                                       nutrient['value']])))
             else:
                 self.__text_action(self.en_to_gr(resp[0]["food_name"] + "\n" + resp[0]["food_description"]))
@@ -166,7 +171,7 @@ class Bot(object):
             self.__search_action(entities)
 
     def __recipe_action(self, entities):
-        self.__text_action(self.phrases.searching())
+        self.__text_action(self.phrases.get_phrases('search_phrases'))
         inp = self.gr_to_en(entities['wikipedia_search_query'][0]['value'])
         try:
             resp = self.fs.recipes_search(inp)
@@ -179,7 +184,8 @@ class Bot(object):
             for ing in recipe['ingredients']['ingredient']:
                 self.__text_action(self.en_to_gr(ing['ingredient_description']))
         except Exception as e:
-            self.__text_action("Δεν υπάρχει διαθέσιμη συνταγή για " + entities['wikipedia_search_query'][0]['value'])
+            self.__text_action(
+                "Δεν υπάρχει διαθέσιμη συνταγή για " + entities['wikipedia_search_query'][0]['value'])
             self.__search_action(entities)
 
 
