@@ -46,7 +46,7 @@ def webhook():
                     bot.decide_action(facebook_input=message_text)
                     for fb_response in bot.facebook_response:
                         send_message(sender_id, fb_response)
-                        bot.facebook_response.remove(fb_response)
+                        # bot.facebook_response.remove(fb_response)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
