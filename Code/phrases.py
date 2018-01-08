@@ -16,7 +16,7 @@ class Phrases(object):
     @staticmethod
     def get_phrases(file):
         stream = open('yaml/' + file + '.yaml', 'r')
-        results = yaml.load(stream)
+        results = yaml.safe_load(stream)
         if file == 'greetings_phrases':
             date = datetime.datetime.now()
             if date.hour < 6 or date.hour > 21:
