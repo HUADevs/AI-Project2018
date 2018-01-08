@@ -10,15 +10,15 @@ class Phrases(object):
 
     @staticmethod
     def add_phrases(file, phrases):
-        stream_load = open('yaml/' + file + '.yaml', 'r')
+        stream_load = open('yaml/' + file + '.yaml', 'r', encoding='utf-8')
         results = yaml.safe_load(stream_load)
-        stream = open('yaml/' + file + '.yaml', 'w')
+        stream = open('yaml/' + file + '.yaml', 'w', encoding='utf-8')
         results = results + phrases
         yaml.safe_dump(results, stream, encoding='utf-8', allow_unicode=True)
 
     @staticmethod
     def get_phrases(file):
-        stream = open('yaml/' + file + '.yaml', 'r')
+        stream = open('yaml/' + file + '.yaml', 'r', encoding='utf-8')
         results = yaml.safe_load(stream)
         if file == 'greetings_phrases':
             date = datetime.datetime.now()

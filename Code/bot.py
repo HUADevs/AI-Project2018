@@ -193,12 +193,12 @@ class Bot(object):
 
 if __name__ == "__main__":
     bot = Bot()
-    #bot.start()
-    print("Training Mode On")
-    while 1:
-        filename=input("enter filename")
-        phraseslist=[]
-        phraseslist.append(input("enter phrase"))
-        bot.learn_action(filename=filename,phraseslist=phraseslist)
+    bot.start()
+    # print("Training Mode On")
+    # while 1:
+    #     filename=input("enter filename \n")
+    #     phraseslist=[]
+    #     phraseslist.append(input("enter phrase \n"))
+    #     bot.learn_action(filename=filename,phraseslist=phraseslist)
 
 
