@@ -200,4 +200,5 @@ if __name__ == "__main__":
     #     phraseslist=[]
     #     phraseslist.append(input("enter phrase"))
     #     bot.learn_action(filename=filename,phraseslist=phraseslist)
+    #
 
