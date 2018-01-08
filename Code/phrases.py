@@ -14,7 +14,7 @@ class Phrases(object):
         results = yaml.safe_load(stream_load)
         stream = open('yaml/' + file + '.yaml', 'w')
         results = results + phrases
-        yaml.safe_dump(results, stream)
+        yaml.safe_dump(results, stream, encoding='utf-8', allow_unicode=True)
 
     @staticmethod
     def get_phrases(file):
