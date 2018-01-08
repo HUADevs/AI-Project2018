@@ -33,6 +33,7 @@ class Bot(object):
         return self.translator.translate(text, 'el', 'en').text
 
     def start(self):
+        self.learn_action()
         if self.speech_input or self.facebook_input:
             self.decide_action()
         else:
@@ -41,8 +42,8 @@ class Bot(object):
                 self.decide_action()
 
     def learn_action(self):
-        Knowledge.learn_default_responses(file='put some file (only the name)',
-                                          phrases=["put some phrases for training"])
+        Knowledge.learn_default_responses(file='search_phrases',
+                                          phrases=["Το αναζητώ αμέσως τώρα"])
 
     def decide_action(self, facebook_input=None):
 

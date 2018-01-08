@@ -10,8 +10,11 @@ class Phrases(object):
 
     @staticmethod
     def add_phrases(file, phrases):
-        stream = open('yaml/' + file + '.yaml', 'a')
-        yaml.safe_dump(phrases, stream)
+        stream_load = open('yaml/' + file + '.yaml', 'r')
+        results = yaml.safe_load(stream_load)
+        stream = open('yaml/' + file + '.yaml', 'w')
+        results = results + phrases
+        yaml.safe_dump(results, stream)
 
     @staticmethod
     def get_phrases(file):
