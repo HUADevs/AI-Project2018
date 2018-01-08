@@ -33,7 +33,6 @@ class Bot(object):
         return self.translator.translate(text, 'el', 'en').text
 
     def start(self):
-        self.learn_action()
         if self.speech_input or self.facebook_input:
             self.decide_action()
         else:
@@ -41,9 +40,9 @@ class Bot(object):
             while 1:
                 self.decide_action()
 
-    def learn_action(self):
-        Knowledge.learn_default_responses(file='search_phrases',
-                                          phrases=["Το αναζητώ αμέσως τώρα"])
+    def learn_action(self, filename, phraseslist):
+        Knowledge.learn_default_responses(file=filename,
+                                          phrases=phraseslist)
 
     def decide_action(self, facebook_input=None):
 
@@ -115,9 +114,7 @@ class Bot(object):
 
     def __joke_action(self):
         joke = self.phrases.get_phrases('joke_phrases')
-        for j in joke:
-            time.sleep(1)
-            self.__text_action(j)
+        self.__text_action(joke)
 
     def __datetime_action(self, entities):
         dt = None
@@ -139,7 +136,7 @@ class Bot(object):
         self.__text_action(self.phrases.get_phrases('search_phrases'))
         if 'wikipedia_search_query' in entities:
             query = entities['wikipedia_search_query'][0]['value']
-            print('wikipedia query: {query}'.format(query=query))
+            #print('wikipedia query: {query}'.format(query=query))
             wikipedia.set_lang("el")
             try:
                 self.__text_action(re.sub(r'\([^)]*\)', '', wikipedia.summary(query, sentences=1)))
@@ -158,7 +155,7 @@ class Bot(object):
             if 'nutrient_type' in entities.keys():
                 self.__text_action(
                     self.en_to_gr(
-                        '1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'])))
+                        '{type} - 1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'],type=resp[0]["food_name"])))
                 for nutrient in entities['nutrient_type']:
                     self.__text_action(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
                                                                                   value=
@@ -197,3 +194,10 @@ class Bot(object):
 if __name__ == "__main__":
     bot = Bot()
     bot.start()
+    # print("Training Mode On")
+    # while 1:
+    #     filename=input("enter filename")
+    #     phraseslist=[]
+    #     phraseslist.append(input("enter phrase"))
+    #     bot.learn_action(filename=filename,phraseslist=phraseslist)
+
