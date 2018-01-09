@@ -1,24 +1,27 @@
 import random
 import datetime
 import yaml
+import os
 
 
 class Phrases(object):
+    YAML_DIRECTORY = os.path.dirname(os.path.abspath(__file__)) + '/yaml/'
+
     def __init__(self):
         # make random more random by seeding with time
         random.seed(datetime.datetime.now())
 
     @staticmethod
     def add_phrases(file, phrases):
-        stream_load = open('yaml/' + file + '.yaml', 'r', encoding='utf-8')
+        stream_load = open(Phrases.YAML_DIRECTORY + file + '.yaml', 'r', encoding='utf-8')
         results = yaml.safe_load(stream_load)
-        stream = open('yaml/' + file + '.yaml', 'w', encoding='utf-8')
+        stream = open(Phrases.YAML_DIRECTORY + file + '.yaml', 'w', encoding='utf-8')
         results = results + phrases
         yaml.safe_dump(results, stream, encoding='utf-8', allow_unicode=True)
 
     @staticmethod
     def get_phrases(file):
-        stream = open('yaml/' + file + '.yaml', 'r', encoding='utf-8')
+        stream = open(Phrases.YAML_DIRECTORY + file + '.yaml', 'r', encoding='utf-8')
         results = yaml.safe_load(stream)
         if file == 'greetings_phrases':
             date = datetime.datetime.now()
