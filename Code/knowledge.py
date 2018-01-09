@@ -46,7 +46,10 @@ class Knowledge(object):
         return datetime.datetime.now().strftime('%I:%M')
 
     def get_weekday(self):
-        locale.setlocale(locale.LC_ALL, 'el_GR.UTF-8')
+        try:
+            locale.setlocale(locale.LC_ALL, 'el_GR.UTF-8')
+        except Exception as e:
+            pass
         return datetime.datetime.today().strftime('%A')
 
     def get_date(self):
