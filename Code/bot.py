@@ -14,10 +14,11 @@ fat_secret_oauth = "90fe184a283449ed8a83e35790c04d65"
 
 
 class Bot(object):
-    def __init__(self, speech_input=False, facebook_input=False):
+    def __init__(self, name=None, speech_input=False, facebook_input=False):
         self.phrases = Phrases()
         self.speech = Speech()
         self.knowledge = Knowledge(weather_api_token=weather_api_token)
+        self.name = name
         self.facebook_input = facebook_input
         if self.facebook_input:
             self.facebook_response = list()
@@ -70,6 +71,19 @@ class Bot(object):
                     self.__text_action(self.phrases.get_phrases('greetings_phrases'))
                 elif intent == 'tutorial':
                     self.__tutorial_action()
+                elif intent == 'name':
+                    if self.name is not None:
+                        self.__text_action(self.phrases.get_phrases('name_phrases').replace('<name>', self.name))
+                    else:
+                        self.__text_action('Οι δημιουργοί μου δεν μου έδωσαν κάποιο όνομα')
+                elif intent == 'swear':
+                    self.__text_action(self.phrases.get_phrases('swear_phrases'))
+                elif intent == 'funny':
+                    self.__text_action(self.phrases.get_phrases('funny_phrases'))
+                elif intent == 'sex_type':
+                    self.__text_action('Λίγο απ\'όλα')
+                elif intent == 'user_joke':
+                    self.__text_action('χαχαχα')
                 elif intent == 'personal_status':
                     self.__personal_status()
                 elif intent == 'joke':
@@ -118,14 +132,14 @@ class Bot(object):
 
     def __datetime_action(self, entities):
         dt = None
-        if 'datetime' in entities:
-            dt = entities['datetime'][0]['grain']
+        if 'date' in entities:
+            dt = entities['date'][0]['value']
             print('Datetime: {dt}'.format(dt=dt))
-        if str(dt) == 'second':
+        if str(dt) == 'hour':
             self.__text_action('Η ώρα είναι {time}'.format(time=self.knowledge.get_time()))
         elif str(dt) == 'day':
             self.__text_action('Σήμερα είναι {weekday}'.format(weekday=self.knowledge.get_weekday()))
-        elif str(dt) == 'ημερομηνία':
+        elif str(dt) == 'date':
             self.__text_action('Σήμερα είναι {date}'.format(date=self.knowledge.get_date()))
 
     def __weather_action(self):
@@ -192,9 +206,9 @@ class Bot(object):
 
 
 if __name__ == "__main__":
-    bot = Bot()
+    bot = Bot(name='Jarvis')
     bot.start()
-    # print("Training Mode On")
+    print("Training Mode On")
     # while 1:
     #     filename=input("enter filename \n")
     #     phraseslist=[]

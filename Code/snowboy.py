@@ -4,7 +4,7 @@ import snowboydecoder
 from bot import Bot
 
 interrupted = False
-assistant = Bot(speech_input=True)
+assistant = Bot(name='Jarvis', speech_input=True)
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 print('Starting assistant... Press Ctrl+C to exit')
 os.system('aplay -q {dir}/audio_files/startup.wav'.format(dir=DIRECTORY))
