@@ -1,6 +1,5 @@
 COMPONENTS NEEDED:
-
-    1.Raspberry Pi 3 Model B and power supply (see recommended kit)
+    1.Raspberry Pi 3 Model B and power supply
     2.USB microphone
     3.Speaker, preferably USB
     4.An SD card with R pre-installed.(see https://www.raspberrypi.org/documentation/installation/installing-images/)
@@ -87,7 +86,6 @@ CONFIGURE AND TEST AUDIO
     }
 
 SETUP VOICE ASSISTANT
-
     1.Clone the repository from github:
         $ git clone https://github.com/iceberg24/AI-Project2018.git
 
