@@ -1,0 +1,108 @@
+COMPONENTS NEEDED:
+
+    1.Raspberry Pi 3 Model B and power supply (see recommended kit)
+    2.USB microphone
+    3.Speaker, preferably USB
+    4.An SD card with R pre-installed.(see https://www.raspberrypi.org/documentation/installation/installing-images/)
+    You may also want to have a USB keyboard, USB mouse, and a monitor with an HDMI cable. These simplify initial hardware setup (and are required to install NOOBS).
+
+CONFIGURE HARDWARE AND NETWORK:
+    1.Connect the microphone and speaker to the Raspberry Pi.
+    2.Insert the SD card into the Raspberry Pi (with NOOBS or Raspbian with Desktop already loaded).
+    3.Connect a USB keyboard, USB mouse and HDMI monitor to your Raspberry Pi. If you don't have these, you can always connect to the Pi remotely.
+    4.Plug in an ethernet cable or connect to a Wi-Fi network.
+
+    5.After you configure access, you can connect to the Raspberry Pi via SSH (optional).
+    6.Configure the date and time
+        Check that the date and time are set correctly on the device.
+            $ date
+
+    Note: An incorrect date or time may cause SSL errors. Restart the device to automatically set the correct date and time from a time server or use the date --s=<STRING> command to set them manually.
+    Connect to the Raspberry Pi via SSH (Optional)
+
+    To run commands on the Raspberry Pi, you need to open the terminal on the device or use an SSH connection. You must use an SSH connection from your development machine if you do not have a monitor, keyboard, and mouse connected to the Raspberry Pi.
+
+    Make sure SSH is enabled on the Raspberry Pi.
+
+        $ssh pi@raspberry-pi-ip-address
+        password: password-for-raspberry-pi
+
+        For example:
+
+        $ ssh pi@192.168.1.101
+        password: raspberry
+
+        On Raspbian, the default password for the pi user is raspberry. You should change this password immediately (run passwd in a terminal on the Pi).
+        Use the terminal or the SSH session you set up in this step to enter the commands in the rest of this guide. The working directory for both is /home/pi.
+
+CONFIGURE AND TEST AUDIO
+    1.Verify that recording and playback work:
+
+        Play a test sound (this will be a person speaking). Press Ctrl+C when done. If you don't hear anything when you run this, check your speaker connection.
+
+            $ speaker-test -t wav
+
+        Record a short audio clip. If you get an error, go to step 2.
+
+            $ arecord --format=S16_LE --duration=5 --rate=16000 --file-type=raw out.raw
+
+        Check the recording by replaying it.
+
+            $ aplay --format=S16_LE --rate=16000 out.raw
+
+        Adjust the playback and recording volume.
+
+            $ alsamixer
+
+    If recording and playback are working, then you are done configuring audio. If not (or if you receive an error), continue to the next step below.
+
+    2.Find your recording and playback devices.
+
+        Locate your USB microphone in the list of capture hardware devices. Write down the card number and device number.
+
+            $ arecord -l
+
+        Locate your speaker in the list of playback hardware devices. Write down the card number and device number. Note that the 3.5mm-jack is typically labeled Analog or bcm2835 ALSA (not bcm2835 IEC958/HDMI).
+
+            $ aplay -l
+
+    Create a new file named .asoundrc in the home directory (/home/pi). Make sure it has the right slave definitions for microphone and speaker; use the configuration below but replace <card number> and <device number> with the numbers you wrote down in the previous step. Do this for both pcm.mic and pcm.speaker.
+
+    pcm.!default {
+      type asym
+      capture.pcm "mic"
+      playback.pcm "speaker"
+    }
+    pcm.mic {
+      type plug
+      slave {
+        pcm "hw:<card number>,<device number>"
+      }
+    }
+    pcm.speaker {
+      type plug
+      slave {
+        pcm "hw:<card number>,<device number>"
+      }
+    }
+
+SETUP VOICE ASSISTANT
+
+    1.Clone the repository from github:
+        $ git clone https://github.com/iceberg24/AI-Project2018.git
+
+    2.Cd into the project directory:
+        $ cd AI-Project2018/
+
+    3.Create a virtual environment:
+        $ virtualenv -p python3 env
+
+    4.Activate the virtual environment:
+        $ source env/bin/activate
+
+    5.Install the required python packages:
+        $ pip install -r requirements.txt
+
+    6.Start the assistant by running the snowboy.py file
+        $ python3 Code/snowboy.py
+
