@@ -99,6 +99,8 @@ class Bot(object):
                     self.__food_action(entities)
                 elif intent == 'recipe':
                     self.__recipe_action(entities)
+                elif intent == 'thanksgiving':
+                    self.__text_action(self.phrases.get_phrases('thanks_phrases'))
                 else:  # No recognized intent
                     # print('Intent not recognized')
                     self.__text_action(self.phrases.get_phrases('unrecognized_intent_phrases'))
@@ -117,7 +119,7 @@ class Bot(object):
                 self.speech.synthesize_text(text)
             if self.facebook_input:
                 self.facebook_response.append(text)
-            if not(self.facebook_input or self.speech_input):
+            if not (self.facebook_input or self.speech_input):
                 print(text)
 
     def __tutorial_action(self):
@@ -150,7 +152,7 @@ class Bot(object):
         self.__text_action(self.phrases.get_phrases('search_phrases'))
         if 'wikipedia_search_query' in entities:
             query = entities['wikipedia_search_query'][0]['value']
-            #print('wikipedia query: {query}'.format(query=query))
+            # print('wikipedia query: {query}'.format(query=query))
             wikipedia.set_lang("el")
             try:
                 self.__text_action(re.sub(r'\([^)]*\)', '', wikipedia.summary(query, sentences=1)))
@@ -169,7 +171,8 @@ class Bot(object):
             if 'nutrient_type' in entities.keys():
                 self.__text_action(
                     self.en_to_gr(
-                        '{type} - 1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'],type=resp[0]["food_name"])))
+                        '{type} - 1 {serving}'.format(serving=food['servings']['serving'][0]['measurement_description'],
+                                                      type=resp[0]["food_name"])))
                 for nutrient in entities['nutrient_type']:
                     self.__text_action(self.en_to_gr('{nutrient}: {value}'.format(nutrient=nutrient['value'],
                                                                                   value=
@@ -208,11 +211,9 @@ class Bot(object):
 if __name__ == "__main__":
     bot = Bot(name='Jarvis')
     bot.start()
-    print("Training Mode On")
+    # print("Training Mode On")
     # while 1:
     #     filename=input("enter filename \n")
     #     phraseslist=[]
     #     phraseslist.append(input("enter phrase \n"))
     #     bot.learn_action(filename=filename,phraseslist=phraseslist)
-
-

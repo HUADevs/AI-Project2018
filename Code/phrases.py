@@ -2,6 +2,7 @@ import random
 import datetime
 import yaml
 import os
+from pathlib import Path
 
 
 class Phrases(object):
@@ -13,11 +14,16 @@ class Phrases(object):
 
     @staticmethod
     def add_phrases(file, phrases):
-        stream_load = open(Phrases.YAML_DIRECTORY + file + '.yaml', 'r', encoding='utf-8')
-        results = yaml.safe_load(stream_load)
-        stream = open(Phrases.YAML_DIRECTORY + file + '.yaml', 'w', encoding='utf-8')
+        file_check = Path(Phrases.YAML_DIRECTORY + file + '.yaml')
+        results = []
+        if file_check.is_file():
+            stream_load = open(Phrases.YAML_DIRECTORY + file + '.yaml', 'r', encoding='utf-8')
+            results = yaml.safe_load(stream_load)
+            stream_load.close()
+        stream = open(Phrases.YAML_DIRECTORY + file + '.yaml', 'w+', encoding='utf-8')
         results = results + phrases
         yaml.safe_dump(results, stream, encoding='utf-8', allow_unicode=True)
+        stream.close()
 
     @staticmethod
     def get_phrases(file):
@@ -31,5 +37,5 @@ class Phrases(object):
                 return random.choice(['Καλημέρα', random.choice(results)])
             elif 12 <= date.hour <= 21:
                 return random.choice(['Καλησπέρα', random.choice(results)])
-
+        stream.close()
         return random.choice(results)
