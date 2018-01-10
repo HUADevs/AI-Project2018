@@ -1,7 +1,7 @@
 import re
 import traceback
 import wikipedia
-from wit import Wit, wit
+from wit import Wit
 from speech import Speech
 from knowledge import Knowledge
 from phrases import Phrases
@@ -101,13 +101,17 @@ class Bot(object):
                     self.__recipe_action(entities)
                 elif intent == 'thanksgiving':
                     self.__text_action(self.phrases.get_phrases('thanks_phrases'))
+                elif intent == 'sticker':
+                    self.__text_action('Επίσης')
                 else:  # No recognized intent
                     # print('Intent not recognized')
                     self.__text_action(self.phrases.get_phrases('unrecognized_intent_phrases'))
                     return
-            except wit.WitError as er:
-                self.__text_action('Θα στείλεις τίποτα;')
+
             except Exception as e:
+                print("Exception occured")
+                print(e)
+                traceback.print_exc()
                 self.__text_action("Έγινε κάποιο λάθος")
                 return
 
